@@ -10,7 +10,7 @@ for item in x:
   y = [math_sym,value_x,value_y]
 
 def calculate(list_var):
-  try:
+  
     if list_var[0] == "*":
       num1 = list_var[1] * list_var[2]
       return num1
@@ -20,12 +20,16 @@ def calculate(list_var):
     elif list_var[0] == "+":
       num1 = list_var[1] + list_var[2]
       return num1
-    else:
+    elif list_var[0] == "-":
       num1 = list_var[1] - list_var[2]
       return num1
+    else:
+      print("Введенный математический символ не верен")
 
   except ZeroDivisionError: 
-    print ("division by zero")
+    print ("Попытка деления на 0")
+except ValueError:
+    print('Одно из введенных значений не является числом.')
 
 print(calculate(y))
 
