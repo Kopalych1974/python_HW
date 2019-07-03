@@ -1,4 +1,4 @@
-with open("recipes.txt", "w") as file:
+with open("food.txt", "w", encoding='utf-8') as file:
     content = """Омлет
 3
 Яйцо | 2 | шт
@@ -27,19 +27,21 @@ with open("recipes.txt", "w") as file:
 Помидор | 2 | шт"""
     file.write(content)
 
-with open("recipes.txt", "r") as file:
+with open("food.txt", "r", encoding='utf-8') as file:
     dishes = []
     cook_book = dict()
 
     for line in file:
         dish = line.strip()
+        # print("Название блюда: {}".format(dish))
         dishes.append(dish)
         person_count = int(file.readline())
+        # print("Количество гостей: {}".format(person_count))
         ingridient_list = []
         for line in file:
             if len(line) > 1:
                 ingridient = dict()
-                print(line)
+                # print(line)
                 f = line.split("|")
                 ingridient["ingridient_name"] = f[0]
                 ingridient["quantity"] = int(f[1])
@@ -48,4 +50,39 @@ with open("recipes.txt", "r") as file:
             else:
                 break
         cook_book[dish] = ingridient_list
-    print(cook_book)
+
+with open("food1.txt", "w", encoding='utf-8') as file:
+    content1 = cook_book
+    file.write(str(content1))
+
+
+    def get_shop_list_by_dishes(dishes, person_count):
+        shop_list = {}
+        for dish in dishes:
+            for ingridient in cook_book[dish]:
+                new_shop_list_item = dict(ingridient)
+                new_shop_list_item['quantity'] *= person_count
+                if new_shop_list_item['ingridient_name'] not in shop_list:
+                    shop_list[new_shop_list_item['ingridient_name']] = new_shop_list_item
+                else:
+                    shop_list[new_shop_list_item['ingridient_name']]['quantity'] += new_shop_list_item['quantity']
+                # print(new_shop_list_item)
+        return (shop_list)
+        # print(shop_list)
+
+
+    def print_shop_list(shop_list):
+        for shop_list_item in shop_list.values():
+            print('{ingridient_name} {quantity} {measure}'.format(**shop_list_item))
+
+
+    def create_shop_list():
+        person_count = int(input('Введите количество людей '))
+        dishes = input('Введите список блюд через запятую ').split(', ')
+        print("Для блюд", dishes, "нам необходимо купить продуктов в количестве:\n")
+        shop_list = get_shop_list_by_dishes(dishes, person_count)
+        print_shop_list(shop_list)
+        print ("\nДля", person_count, "персон")
+
+
+    create_shop_list()
