@@ -1,37 +1,41 @@
-math_sym, value_x, value_y = input('Введите последовательность в формате: математический символ, "пробел", x, "пробел", y ').split()
-#Создаем список из введенных параметров
-x = [math_sym,value_x,value_y]
-y = []
+try:
+    math_sym, value_x, value_y = input(
+        'Введите последовательность в формате: математический символ, "пробел", x, "пробел", y ').split()
+    # Создаем список из введенных параметров
+    x = [math_sym, value_x, value_y]
+    y = []
 
-for item in x:
-  math_sym = x[0]
-  value_x = int(x[1])
-  value_y = int(x[2])
-  y = [math_sym,value_x,value_y]
+    for item in x:
+        math_sym = x[0]
+        value_x = int(x[1])
+        value_y = int(x[2])
+        y = [math_sym, value_x, value_y]
 
-def calculate(list_var):
-  
-    if list_var[0] == "*":
-      num1 = list_var[1] * list_var[2]
-      return num1
-    elif list_var[0] == "/":
-      num1 = list_var[1] / list_var[2]
-      return num1
-    elif list_var[0] == "+":
-      num1 = list_var[1] + list_var[2]
-      return num1
-    elif list_var[0] == "-":
-      num1 = list_var[1] - list_var[2]
-      return num1
-    else:
-      print("Введенный математический символ не верен")
 
-  except ZeroDivisionError: 
+    def calculate(list_var):
+
+        if list_var[0] == "*":
+            num1 = list_var[1] * list_var[2]
+            return num1
+        elif list_var[0] == "/":
+            num1 = list_var[1] / list_var[2]
+            return num1
+        elif list_var[0] == "+":
+            num1 = list_var[1] + list_var[2]
+            return num1
+        elif list_var[0] == "-":
+            num1 = list_var[1] - list_var[2]
+            return num1
+        else:
+            print("Введенный математический символ не верен")
+
+
+    print(calculate(y))
+
+except ZeroDivisionError:
     print ("Попытка деления на 0")
 except ValueError:
     print('Одно из введенных значений не является числом.')
-
-print(calculate(y))
 
 # Использование assert
 
