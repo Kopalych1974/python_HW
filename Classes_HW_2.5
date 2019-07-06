@@ -1,0 +1,56 @@
+import datetime
+class Timer():
+    def __init__(self,):
+        self.file = ()
+
+    def __enter__(self,):
+        self.startTime = datetime.datetime.now()
+
+    def __exit__(self, rtype, value, traceback):
+        self.endTime = datetime.datetime.now()
+        print('Время начала:', self.startTime)
+        print('Время окончания:', self.endTime)
+        print('Работа программы длилась:', self.endTime - self.startTime)
+
+
+with Timer() as f:
+    person = int(input('Введите количество людей '))
+    cook_book = [
+        ['Салат', [
+            ['картофель', 100, 'гр.'],
+            ['морковь', 50, 'гр.'],
+            ['огурцы', 50, 'гр.'],
+            ['горошек', 30, 'гр.'],
+            ['майонез', 70, 'мл.'],
+        ]
+         ],
+        ['Пицца',
+         [
+             ['сыр', 50, 'гр.'],
+             ['томаты', 50, 'гр.'],
+             ['тесто', 100, 'гр.'],
+             ['бекон', 30, 'гр.'],
+             ['колбаса', 30, 'гр.'],
+             ['грибы', 20, 'гр.'],
+         ]
+         ],
+        ['Фруктовый десерт',
+         [
+             ['хурма', 60, 'гр.'],
+             ['киви', 60, 'гр.'],
+             ['творог', 60, 'гр.'],
+             ['сахар', 10, 'гр.'],
+             ['мед', 50, 'мл.'],
+         ]
+         ]
+    ]
+
+    for dish in cook_book:
+        course = dish[0]
+        print(course)
+
+        for ingridients in dish[1]:
+            sort_of_food, wight, weight_measure = ingridients
+            wight = wight * person
+            print(sort_of_food, wight, weight_measure)
+        print()
