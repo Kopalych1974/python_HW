@@ -60,3 +60,42 @@ def main():
 
 
 main()
+
+
+#Задача №2.
+#Написать программу для файла в формате xml.
+
+
+
+import xml.etree.ElementTree as ET
+tree = ET.parse("newsafr.xml")
+root = tree.getroot()
+words_dict = {}
+xml_items = root.findall("channel/item")
+for xmli in xml_items:
+    #print(xmli.attrib["id"])
+    #print(xmli.find("description").text)
+    news_word = xmli.find("description").text.split()
+    for word in news_word:
+        if len(word) > 6:
+            if word in words_dict.keys():
+                words_dict[word] += 1
+            else:
+                words_dict[word] = 1
+
+
+words_len_list = []
+
+for key, value in words_dict.items():
+    word_tuple = (value, key)
+    words_len_list.append(word_tuple)
+words_len_list_sorted = sorted(words_len_list)
+
+print('Топ 10 встречаюшихся слов: ')
+n = 10
+for key, value in words_len_list_sorted[-10:]:
+    print('Слово "{}" встречается {} раз'.format(value, key))
+    n -= 1
+    
+    
+    
