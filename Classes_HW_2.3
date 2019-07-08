@@ -4,7 +4,12 @@ try:
     # Создаем список из введенных параметров
     x = [math_sym, value_x, value_y]
     y = []
-
+    
+    # Использование assert
+    #num_list = ['+', '-', '*', '/']
+    math_sym = "+"
+    assert math_sym[0] in x, 'Недопустимое значение'
+    
     for item in x:
         math_sym = x[0]
         value_x = int(x[1])
@@ -39,8 +44,8 @@ except ValueError:
 
 # Использование assert
 
-num_list = ['+', '-', '*', '/']
+#num_list = ['+', '-', '*', '/']
 
-for number in num_list:
+#for number in num_list:
     #print(number)
-    assert number[0] == "+"
+    #assert number[0] == "+"
