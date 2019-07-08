@@ -10,7 +10,7 @@ def read_files(name):
         data = f.read()
         result = chardet.detect(data)
         data = data.decode(result['encoding'])
-        data = json.loads(data)  # распарсеваем строку
+        data = json.loads(data.lower())  # распарсеваем строку
         original_text = ''
         for items in data['rss']['channel']['items']:
             original_text += ' ' + items['description']
