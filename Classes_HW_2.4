@@ -1,88 +1,51 @@
-with open("food.txt", "w", encoding='utf-8') as file:
-    content = """Омлет
-3
-Яйцо | 2 | шт
-Молоко | 100 | мл
-Помидор | 2 | шт
+def read_cook_book():
+    cook_book = {}
 
-Утка по-пекински
-4
-Утка | 1 | шт
-Вода | 2 | л
-Мед | 3 | ст.л
-Соевый соус | 60 | мл
-
-Запеченный картофель
-3
-Картофель | 1 | кг
-Чеснок | 3 | зубч
-Сыр гауда | 100 | г
-
-Фахитос
-5
-Говядина | 500 | г
-Перец сладкий | 1 | шт
-Лаваш | 2 | шт
-Винный уксус | 1 | ст.л
-Помидор | 2 | шт"""
-    file.write(content)
-
-with open("food.txt", "r", encoding='utf-8') as file:
-    dishes = []
-    cook_book = dict()
-
-    for line in file:
-        dish = line.strip()
-        # print("Название блюда: {}".format(dish))
-        dishes.append(dish)
-        person_count = int(file.readline())
-        # print("Количество гостей: {}".format(person_count))
-        ingridient_list = []
+    with open('food.txt', 'rt', encoding='UTF8') as file:
         for line in file:
-            if len(line) > 1:
-                ingridient = dict()
-                # print(line)
-                f = line.split("|")
-                ingridient["ingridient_name"] = f[0]
-                ingridient["quantity"] = int(f[1])
-                ingridient["measure"] = f[2].strip()
-                ingridient_list.append(ingridient.copy())
-            else:
-                break
-        cook_book[dish] = ingridient_list
+            lv_dish_name = line.strip()
+            list_ing4dish = []
+            lv_ing_num = file.readline().strip()  # название блюда
+            lv_ing_proc = 0
+            while (int(lv_ing_num) > lv_ing_proc):
+                dict_ing_info = {}
+                list_ing_info = []
+                lv_ingredient_line = file.readline().strip()  # строка с одним ингеридентом
+                list_ing_info = lv_ingredient_line.split('|')
+                dict_ing_info['ingridient_name'] = list_ing_info[0]
+                dict_ing_info['quantity'] = list_ing_info[1]
+                dict_ing_info['measure'] = list_ing_info[2]
+                list_ing4dish.append(dict_ing_info)
+                lv_ing_proc += 1
+            cook_book[str(lv_dish_name)] = list_ing4dish
+            file.readline()
+    return cook_book
 
-with open("food1.txt", "w", encoding='utf-8') as file:
-    content1 = cook_book
-    file.write(str(content1))
+def get_shop_list_by_dishes(dishes, person_count):
+    shop_list = {}
+    loc_dict_cook_book = read_cook_book()
+    for dish in dishes:
+        if (dish == '' or dish == ' '):
+            continue
+        list_ing4dish = loc_dict_cook_book.get(str(dish))   #получаем список ингредиентов для блюда
+        for ing in list_ing4dish:
+            if ing['ingridient_name'] not in shop_list.keys():
+                shop_list[ing['ingridient_name']] = {'measure': ing['measure'], 'quantity': 0}
+            shop_list[ing['ingridient_name']]['quantity'] = shop_list[ing['ingridient_name']]['quantity'] + (int(ing['quantity'] )) * person_count
+    return shop_list
 
+def read_cook_book_anc_calc_list():
+    loc_dict_cook_book = read_cook_book()
+    print("Задача №1: Должен получится следующий словарь", loc_dict_cook_book)
 
-    def get_shop_list_by_dishes(dishes, person_count):
-        shop_list = {}
-        for dish in dishes:
-            for ingridient in cook_book[dish]:
-                new_shop_list_item = dict(ingridient)
-                new_shop_list_item['quantity'] *= person_count
-                if new_shop_list_item['ingridient_name'] not in shop_list:
-                    shop_list[new_shop_list_item['ingridient_name']] = new_shop_list_item
-                else:
-                    shop_list[new_shop_list_item['ingridient_name']]['quantity'] += new_shop_list_item['quantity']
-                # print(new_shop_list_item)
-        return (shop_list)
-        # print(shop_list)
+    print('\nЗадача №2: Получаем количество блюд и персон, а также формируем список ингридиентов')
 
+    loc_persons_num = int(input('\nВведите количество персон: '))
+    loc_list_dishes = input('Введите список блюд через запятую: ').split(', ')
+    print("\nДля блюд", loc_list_dishes, "на", loc_persons_num, "персон нам необходимо купить продуктов в количестве:\n")
+    loc_list2buy = get_shop_list_by_dishes(loc_list_dishes, loc_persons_num)
+    print(loc_list2buy)
 
-    def print_shop_list(shop_list):
-        for shop_list_item in shop_list.values():
-            print('{ingridient_name} {quantity} {measure}'.format(**shop_list_item))
-
-
-    def create_shop_list():
-        person_count = int(input('Введите количество людей '))
-        dishes = input('Введите список блюд через запятую ').split(', ')
-        print("Для блюд", dishes, "нам необходимо купить продуктов в количестве:\n")
-        shop_list = get_shop_list_by_dishes(dishes, person_count)
-        print_shop_list(shop_list)
-        print ("\nДля", person_count, "персон")
-
-
-    create_shop_list()
+print('Начало работы программы********************')
+read_cook_book_anc_calc_list()
+print('Завершение работы программы********************')
