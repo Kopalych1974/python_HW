@@ -1,0 +1,41 @@
+import requests
+#  документация https://yandex.ru/dev/translate/doc/dg/reference/translate-docpage/
+
+API_KEY = 'trnsl.1.1.20190712T081241Z.0309348472c8719d.0efdbc7ba1c507292080e3fbffe4427f7ce9a9f0'
+URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+
+def translate_it(text, to_lang):
+    """
+    https://translate.yandex.net/api/v1.5/tr.json/translate ?
+    key=<API-ключ>
+     & text=<переводимый текст>
+     & lang=<направление перевода>
+     & [format=<формат текста>]
+     & [options=<опции перевода>]
+     & [callback=<имя callback-функции>]
+    :param to_lang:
+    :return:
+    """
+
+    params = {
+        'key': API_KEY,
+        'text': text,
+        'lang': 'es-{}'.format(to_lang),
+    }
+
+    response = requests.get(URL, params=params)
+    json_ = response.json()
+    return ''.join(json_['text'])
+
+#def translate_my ():
+translated_txt = open('ES.txt', "rt", encoding='UTF-8')
+text = translated_txt.read()
+translated_txt.close()
+#print("Оригинал", text)
+write_file = open("translated_ES_RU.txt", "w", encoding='UTF-8')
+write_file.write(translate_it(text, 'ru'))
+write_file.close()
+#print('translated_ES_RU.txt')
+
+if __name__ == '__main__':
+    print("Перевод", translate_it(text, 'ru'))
