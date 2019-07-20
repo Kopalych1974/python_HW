@@ -23,9 +23,8 @@ class User:
             params=params
         )
         return response
-    time.sleep(t)
-    
-#Функция для запроса всех друзей у пользователя.
+
+#Функция запроса всех друзей пользователя
 
     def friends_request(self):
         params = self.get_params()
@@ -34,53 +33,57 @@ class User:
             params=params
         )
         return response.json()['response']['items']
+    time.sleep(t)
 
-#Функция для запроса всех групп у пользователя.
-   
+#Функция запроса всех групп пользователя
+
     def groups_request(self):
-
+        friends = []
         params = self.get_params()
         response = self.request(
             'groups.get',
-            params=params,
+            params=params
 
         )
         return response.json()['response']['items']
+    time.sleep(t)
+
+#Функция, которая выдает друзей в группах, в которых зарегистрирован пользователь.
 
     def groups_mutual(self):
 
-        params = self.get_params_groupe()
+        params = {'group_id': groups, 'filter':'friends', 'access_token': self.token, 'v': '5.52'}
         response = self.request(
             'groups.getMembers',
             params=params
         )
         return response.json()['response']['items']
-
-
+    time.sleep(t)
+#import requests
+#response = requests.get("https://api.vk.com/method/groups.getMembers?group_id=27683540&filter=friends&access_token=73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1&v=5.52")
+#$members = json_decode((https://api.vk.com/method/groups.getMembers?group_id=тутid&offset={$offset}&count={$limit}&fields=bdate&access_token={$token}&v=5.69"), true);
+#print (response.json()['response']['items'])
 
 user_id = User(TOKEN)
 friends = user_id.friends_request()
-friends_lists = friends
-
-
 groups = user_id.groups_request()
-#mutual_groups = friends.groups_mutual()
-
+mutual_groups = user_id.groups_mutual()
 
 # for id in friends:
-#     groups_for_id = id.groups_mutual()
+#     groups_for_id = user_id.groups_mutual()
 #     print (groups_for_id)
 
 print("Группы у пользователя с ID 171691064", groups)
 print(" ")
-#rint(friends_lists)
 print("Друзья у пользователя с ID 171691064", friends)
-
+print(" ")
+print(mutual_groups)
 
 # #сохраняем в json
 # # with open('groups.json', 'w', encoding='utf-8') as fh:  # открываем файл на запись
 # #     fh.write(json.dumps(groups, ensure_ascii=False))  # преобразовываем словарь data в unicode-строку и записываем в файл
 #
+
 
 
 
