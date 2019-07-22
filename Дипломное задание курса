@@ -20,14 +20,21 @@ friends = set(vk_request('friends.get', ['user_id=%s' % user, 'order=hints', 'co
 
 # Получаем список групп целевого пользователя;
 groups = set(vk_request('groups.get', ['user_id=%s' % user, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
-print("Выводим группы целевого пользователя:", groups)
+#print("Выводим группы целевого пользователя:", groups)
+
+for temp_users in friends:
+	try:
+			user_mutual_groups = set(vk_request('groups.get', ['user_id=%s' % temp_users, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
+			time.sleep(t)
+			#print ("Выводим группы друзей:", user_mutual_groups)
+			set_a = groups
+			set_b = user_1_mutual_groups
+			symm_diff = set_a.difference(set_b)
+			print(symm_diff)
 
 
-#temp_users = '15973376'
-for i, temp_users in enumerate(friends):
-	user_1_mutual_friends = set(vk_request('groups.get', ['user_id=%s' % temp_users, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
-	time.sleep(t)
-	print ("Выводим группы одного из друзей с ID:", temp_users, user_1_mutual_friends)
+	except:
+		continue
 
 
 
