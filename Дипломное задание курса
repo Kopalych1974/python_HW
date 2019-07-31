@@ -2,13 +2,12 @@
 import requests
 import time
 import json
-from threading import Thread
 from token import *
 
 
 t = 0.35
-user = '171691064'
-read_token = open('tokens.py', 'r') #'73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1'
+user = input('Введите id пользователя:')
+read_token = open('tokens.py', 'r')
 token = read_token.readline()
 
 #Функция, с помощью которой будем общаться с сервером VK
@@ -26,43 +25,37 @@ groups = set(vk_request('groups.get', ['user_id=%s' % user, 'order=hints', 'coun
 #print("Выводим группы целевого пользователя:", groups)
 
 #Получаем группы друзей
-symm_diff = []
+set_a = []
 for temp_users in friends:
 	try:
 			user_mutual_groups = set(vk_request('groups.get', ['user_id=%s' % temp_users, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
 			time.sleep(t)
-			#print ("Выводим группы друзей:", user_mutual_groups)
 			set_a = groups
-			set_b = groups & user_mutual_groups
-			print (set_b)
-			#symm_diff = set_a - set_b
-			#print(set_b)
-			#symm_diff_1 = {}
-			# symm_diff.append(set_b)
-			# print(symm_diff)
-	#
-	#
+			set_b = user_mutual_groups
+			groups = set_a - set_b
+
 	except:
 		continue
+print (set_a)
 
-groups_by_id = vk_request('groups.getById', ['group_ids=4100014, 27683540, 125927592, 35486626', 'extended=1', 'fields=members_count', 'v=5.52'], token)['response']
-#print("Выводим группы целевого пользователя:", groups_by_id)
+
+for id  in set_a:
+    groups_by_id = vk_request('groups.getById',['group_ids=%s' % id,'extended=1','fields=members_count','v=5.52'],token)['response']
+    print("Выводим группы целевого пользователя:", groups_by_id)
 
 
 data_for_saving = []
-for item in groups_by_id:
+for response in groups_by_id:
         group_dict = {}
-        group_dict['name'] = item.get('name')
-        group_dict['gid'] = item.get('screen_name')
-        group_dict['members_count'] = item.get('members_count')
+        group_dict['name'] = group_dict.get('name')
+        group_dict['gid'] = group_dict.get('screen_name')
+        group_dict['members_count'] = group_dict.get('members_count')
         data_for_saving.append(group_dict)
-print(data_for_saving)
+print(groups_by_id)
+
 
 #сохраняем в json
 
 with open('groups.json', 'w', encoding='utf-8') as f:  # открываем файл на запись
-	json.dump(data_for_saving, f, indent=4, ensure_ascii=False, sort_keys=False)  # преобразовываем словарь data в unicode-строку и записываем в файл
-
-
-
+	json.dump(groups_by_id, f, indent=4, ensure_ascii=False, sort_keys=False)  # преобразовываем словарь data в unicode-строку и записываем в файл
 
