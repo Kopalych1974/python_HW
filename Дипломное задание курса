@@ -45,17 +45,16 @@ for id  in set_a:
 
 
 data_for_saving = []
-for response in groups_by_id:
+for item in groups_by_id:
         group_dict = {}
-        group_dict['name'] = group_dict.get('name')
-        group_dict['gid'] = group_dict.get('screen_name')
-        group_dict['members_count'] = group_dict.get('members_count')
+        group_dict['name'] = item.get('name')
+        group_dict['gid'] = item.get('screen_name')
+        group_dict['members_count'] = item.get('members_count')
         data_for_saving.append(group_dict)
-print(groups_by_id)
+print(data_for_saving)
 
 
 #сохраняем в json
 
 with open('groups.json', 'w', encoding='utf-8') as f:  # открываем файл на запись
-	json.dump(groups_by_id, f, indent=4, ensure_ascii=False, sort_keys=False)  # преобразовываем словарь data в unicode-строку и записываем в файл
-
+	json.dump(data_for_saving, f, indent=4, ensure_ascii=False, sort_keys=False)  # преобразовываем словарь data в unicode-строку и записываем в файл
