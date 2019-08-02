@@ -1,4 +1,5 @@
-# Вывести список групп в ВК в которых состоит пользователь, но не состоит никто из его друзей. В качестве жертвы, на ком тестировать, можно использовать
+# Вывести список групп в ВК в которых состоит пользователь, но не состоит никто из его друзей. 
+
 import requests
 import time
 import json
@@ -7,6 +8,9 @@ from token import *
 
 t = 0.35
 user = input('Введите id пользователя:')
+# Можно предложить ввести токен.
+# token = input('Введите token пользователя:')
+# Считываем токен из файла.
 read_token = open('tokens.py', 'r')
 token = read_token.readline()
 
@@ -38,19 +42,16 @@ for temp_users in friends:
 		continue
 print (set_a)
 
-
-for id  in set_a:
-    groups_by_id = vk_request('groups.getById',['group_ids=%s' % id,'extended=1','fields=members_count','v=5.52'],token)['response']
-    print("Выводим группы целевого пользователя:", groups_by_id)
-
-
 data_for_saving = []
-for item in groups_by_id:
-        group_dict = {}
-        group_dict['name'] = item.get('name')
-        group_dict['gid'] = item.get('screen_name')
-        group_dict['members_count'] = item.get('members_count')
-        data_for_saving.append(group_dict)
+for id in set_a:
+	groups_by_id = vk_request('groups.getById',['group_ids=%s' % id,'extended=1','fields=members_count','v=5.52'],token)['response']
+	print("Выводим группы целевого пользователя:", groups_by_id)
+	for item in groups_by_id:
+		group_dict = {}
+		group_dict['name'] = item.get('name')
+		group_dict['gid'] = item.get('screen_name')
+		group_dict['members_count'] = item.get('members_count')
+		data_for_saving.append(group_dict)
 print(data_for_saving)
 
 
