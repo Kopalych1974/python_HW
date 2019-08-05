@@ -6,56 +6,93 @@ import json
 from token import *
 
 
-t = 0.35
-user = input('Введите id пользователя:')
-# Можно предложить ввести токен.
-# token = input('Введите token пользователя:')
-# Считываем токен из файла.
-read_token = open('tokens.py', 'r')
+#user_id = input('Введите id пользователя или его user_name:')
+user_id = '171691064'
+read_token = open('tokens.py', 'r') #'73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1'
 token = read_token.readline()
 
-#Функция, с помощью которой будем общаться с сервером VK
-
-def vk_request (method, parameters, token):
-	return requests.get('https://api.vk.com/method/%s?%s&access_token=%s' % (method, '&'.join(parameters), token)).json()
-
-#Пполучаем список всех друзей целевого пользователя
-
-friends = set(vk_request('friends.get', ['user_id=%s' % user, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
-#print("Выводим друзей целевого пользователя:", friends)
-
 # Получаем список групп целевого пользователя;
-groups = set(vk_request('groups.get', ['user_id=%s' % user, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
-#print("Выводим группы целевого пользователя:", groups)
+
+def get_user_groups(user_id):
+	params = {
+		'access_token': token,
+		'v': 5.92,
+		'user_ids': user_id
+	}
+	url = 'https://api.vk.com/method/groups.get'
+	response = requests.get(url, params=params, timeout=30).json()
+	user_groups_set = set(response['response']['items'])
+
+	print('Целевой пользователь состоит в', len(user_groups_set), 'группах')
+	print('под следующими ID', user_groups_set)
+	return (user_groups_set)
+
+
+user_groups_set = get_user_groups(user_id)
+
+
+#Получаем список всех друзей целевого пользователя
+def get_user_friends(user_id):
+	params = {
+		'access_token': token,
+		'v': 5.92,
+		'user_ids': user_id
+	}
+	url = 'https://api.vk.com/method/friends.get'
+	response = requests.get(url, params=params, timeout=30).json()
+	friends_list_id = response['response']['items']
+	print('У целевого пользователя имеются друзья в количестве: ', len(friends_list_id))
+	return (friends_list_id)
+
+friends_list_id = get_user_friends(user_id)
 
 #Получаем группы друзей
-set_a = []
-for temp_users in friends:
-	try:
-			user_mutual_groups = set(vk_request('groups.get', ['user_id=%s' % temp_users, 'order=hints', 'count=900', 'v=5.52'], token)['response']['items'])
-			time.sleep(t)
-			set_a = groups
-			set_b = user_mutual_groups
-			groups = set_a - set_b
 
-	except:
-		continue
-print (set_a)
+friends_group = []
+#count = 1
+for friend in friends_list_id:
+    url = 'https://api.vk.com/method/groups.get'
+    params = {
+        'access_token': token,
+        'v': 5.92,
+        'user_id': friend
+    }
+    response = requests.get(url, params=params, timeout=30).json()
+    if 'error' in response:
+        continue
+    else:
+        friends_group.extend(response['response']['items'])
 
-data_for_saving = []
-for id in set_a:
-	groups_by_id = vk_request('groups.getById',['group_ids=%s' % id,'extended=1','fields=members_count','v=5.52'],token)['response']
-	print("Выводим группы целевого пользователя:", groups_by_id)
-	for item in groups_by_id:
-		group_dict = {}
-		group_dict['name'] = item.get('name')
-		group_dict['gid'] = item.get('screen_name')
-		group_dict['members_count'] = item.get('members_count')
-		data_for_saving.append(group_dict)
-print(data_for_saving)
+    time.sleep(0.5)
 
 
-#сохраняем в json
+friends_group_set = set(friends_group)
+only_user_groups = user_groups_set.difference(friends_group_set)
+
+print('Выявлено ', len(only_user_groups), 'группы, в которых состоит целевой пользователь без своих друзей: ', only_user_groups)
+
+group_list = []
+for group in only_user_groups:
+	group_info_dict = {}
+	params = {
+		'access_token': token,
+		'v': 5.92,
+		'group_id': group,
+		'fields': 'members_count'
+	}
+	url = 'https://api.vk.com/method/groups.getById'
+	response = requests.get(url, params=params, timeout=30).json()
+	group_info_dict['name'] = (response['response'][0]['name'])
+	group_info_dict['gid'] = (response['response'][0]['id'])
+	group_info_dict['members_count'] = (response['response'][0]['members_count'])
+	group_list.append(group_info_dict)
+
+for p in group_list:
+	print(p)
+
+
+# #сохраняем в json
 
 with open('groups.json', 'w', encoding='utf-8') as f:  # открываем файл на запись
-	json.dump(data_for_saving, f, indent=4, ensure_ascii=False, sort_keys=False)  # преобразовываем словарь data в unicode-строку и записываем в файл
+	json.dump(group_list, f, indent=4, ensure_ascii=False, sort_keys=False)  # преобразовываем словарь data в unicode-строку и записываем в файл
+
