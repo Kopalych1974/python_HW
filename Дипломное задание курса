@@ -6,9 +6,9 @@ import json
 from token import *
 
 
-#user_id = input('Введите id пользователя или его user_name:')
-user_id = '171691064'
-read_token = open('tokens.py', 'r') #'73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1'
+user_id = input('Введите id пользователя или его user_name:')
+#user_id = '171691064'
+read_token = open('tokens.py', 'r')
 token = read_token.readline()
 
 # Получаем список групп целевого пользователя;
